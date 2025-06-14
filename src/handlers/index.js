@@ -9,6 +9,7 @@ const { createMeetingEmbed } = require('./meeting');
 const { createOpportunityEmbed } = require('./opportunity');
 const { createTargetListEmbed } = require('./targetList');
 const { createTaskEmbed } = require('./task');
+const { createLeadEmbed } = require('./lead');
 const axios = require('axios');
 const logger = require('../utils/logger');
 
@@ -69,6 +70,9 @@ async function handleWebhook(data, eventType, entityType) {
       break;
     case 'task':
       embed = createTaskEmbed(data, eventType, baseEmbed);
+      break;
+    case 'lead':
+      embed = createLeadEmbed(data, eventType, baseEmbed);
       break;
     // Add other entity types as they are created
     // case 'call':

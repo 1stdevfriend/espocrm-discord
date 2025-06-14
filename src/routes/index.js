@@ -13,9 +13,10 @@ const meetingRoutes = require('./meeting');
 const opportunityRoutes = require('./opportunity');
 const targetListRoutes = require('./targetList');
 const taskRoutes = require('./task');
+const leadRoutes = require('./lead');
 
 // Mount entity routes
-router.use('/user', userRoutes);
+router.use('/lead', leadRoutes);
 router.use('/account', accountRoutes);
 router.use('/call', callRoutes);
 router.use('/campaign', campaignRoutes);
@@ -26,5 +27,6 @@ router.use('/meeting', meetingRoutes);
 router.use('/opportunity', opportunityRoutes);
 router.use('/targetlist', targetListRoutes);
 router.use('/task', taskRoutes);
+router.use('/user', userRoutes);
 
 module.exports = router; 

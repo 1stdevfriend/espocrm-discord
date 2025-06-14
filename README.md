@@ -41,6 +41,11 @@ node src/test/sendSamples.js
 ```
 This script uses the `TEST_DISCORD_WEBHOOK_URL` if set, so all test notifications go to a single Discord channel.
 
+#### How to Test Using Test Files
+- **Test Script**: The `src/test/sendSamples.js` script sends sample payloads for all entities and event types (create, update, delete) to your local server.
+- **Sample Payloads**: The sample payloads are defined in `src/test/webhookSamples.js`. You can modify these payloads to test different scenarios.
+- **Verification**: After running the test script, check your Discord channel for the formatted embeds. If `TEST_DISCORD_WEBHOOK_URL` is set, all notifications will be sent to that channel.
+
 ## Project Structure
 - `src/handlers/` - Entity-specific webhook handlers
 - `src/routes/` - Express routes for each entity

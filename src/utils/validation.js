@@ -44,8 +44,9 @@ function validateRequiredFields(data, entityType) {
  * @returns {boolean} - Whether all required fields are present
  */
 function validateUpdateData(data) {
-  if (!data.modifiedByName) {
-    logger.warn('Missing required fields for update', { data });
+  // Only require 'id' for update events
+  if (!data || !data.id) {
+    logger.warn('Missing id for update', { data });
     return false;
   }
   return true;

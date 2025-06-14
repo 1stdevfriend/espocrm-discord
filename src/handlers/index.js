@@ -16,6 +16,20 @@ const logger = require('../utils/logger');
 // const { createCallEmbed } = require('./call');
 // etc...
 
+const webhookUrls = {
+  user: process.env.DISCORD_WEBHOOK_URL_USER,
+  account: process.env.DISCORD_WEBHOOK_URL_ACCOUNT,
+  call: process.env.DISCORD_WEBHOOK_URL_CALL,
+  campaign: process.env.DISCORD_WEBHOOK_URL_CAMPAIGN,
+  case: process.env.DISCORD_WEBHOOK_URL_CASE,
+  contact: process.env.DISCORD_WEBHOOK_URL_CONTACT,
+  document: process.env.DISCORD_WEBHOOK_URL_DOCUMENT,
+  meeting: process.env.DISCORD_WEBHOOK_URL_MEETING,
+  opportunity: process.env.DISCORD_WEBHOOK_URL_OPPORTUNITY,
+  targetlist: process.env.DISCORD_WEBHOOK_URL_TARGETLIST,
+  task: process.env.DISCORD_WEBHOOK_URL_TASK,
+};
+
 async function handleWebhook(data, eventType, entityType) {
   const baseEmbed = {
     timestamp: new Date().toISOString()
@@ -65,10 +79,11 @@ async function handleWebhook(data, eventType, entityType) {
       throw new Error(`Unsupported entity type: ${entityType}`);
   }
 
-  // Send to Discord
-  const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+  // Use test webhook if set, otherwise entity-specific
+  const testWebhookUrl = process.env.TEST_DISCORD_WEBHOOK_URL;
+  const webhookUrl = testWebhookUrl || webhookUrls[entityType.toLowerCase()];
   if (!webhookUrl) {
-    throw new Error('Discord webhook URL not configured');
+    throw new Error(`Discord webhook URL not configured for entity: ${entityType}`);
   }
 
   try {

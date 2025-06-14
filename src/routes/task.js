@@ -1,23 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const logger = require('../utils/logger');
 const { handleWebhook } = require('../handlers');
 const { validateBasicData, validateRequiredFields, validateUpdateData } = require('../utils/validation');
-const logger = require('../utils/logger');
 
 // Create task
 router.post('/create', async (req, res) => {
   try {
-    const data = req.body;
-    
-    // Validate basic data structure
-    validateBasicData(data);
-    
-    // Validate required fields for task creation
-    validateRequiredFields(data, 'task');
-    
-    // Process webhook
-    await handleWebhook(data, 'create', 'task');
-    
+    const taskData = req.body[0];
+    if (!validateBasicData(taskData) || !validateRequiredFields(taskData, 'task')) {
+      return res.status(400).json({ error: 'Invalid task data' });
+    }
+    await handleWebhook(taskData, 'create', 'task');
     res.status(200).json({ message: 'Task creation webhook processed successfully' });
   } catch (error) {
     logger.error('Error processing task creation webhook', { error: error.message });
@@ -28,17 +22,11 @@ router.post('/create', async (req, res) => {
 // Update task
 router.post('/update', async (req, res) => {
   try {
-    const data = req.body;
-    
-    // Validate basic data structure
-    validateBasicData(data);
-    
-    // Validate required fields for update
-    validateUpdateData(data);
-    
-    // Process webhook
-    await handleWebhook(data, 'update', 'task');
-    
+    const taskData = req.body[0];
+    if (!validateBasicData(taskData) || !validateUpdateData(taskData)) {
+      return res.status(400).json({ error: 'Invalid task data' });
+    }
+    await handleWebhook(taskData, 'update', 'task');
     res.status(200).json({ message: 'Task update webhook processed successfully' });
   } catch (error) {
     logger.error('Error processing task update webhook', { error: error.message });
@@ -49,14 +37,11 @@ router.post('/update', async (req, res) => {
 // Delete task
 router.post('/delete', async (req, res) => {
   try {
-    const data = req.body;
-    
-    // Validate basic data structure
-    validateBasicData(data);
-    
-    // Process webhook
-    await handleWebhook(data, 'delete', 'task');
-    
+    const taskData = req.body[0];
+    if (!validateBasicData(taskData)) {
+      return res.status(400).json({ error: 'Invalid task data' });
+    }
+    await handleWebhook(taskData, 'delete', 'task');
     res.status(200).json({ message: 'Task deletion webhook processed successfully' });
   } catch (error) {
     logger.error('Error processing task deletion webhook', { error: error.message });

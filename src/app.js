@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(morgan('combined'));
 
 // Routes
-app.use('/webhook', routes);
+app.use('/', routes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {

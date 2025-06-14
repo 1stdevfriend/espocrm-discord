@@ -1,23 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const logger = require('../utils/logger');
 const { handleWebhook } = require('../handlers');
 const { validateBasicData, validateRequiredFields, validateUpdateData } = require('../utils/validation');
-const logger = require('../utils/logger');
 
 // Create case
 router.post('/create', async (req, res) => {
   try {
-    const data = req.body;
-    
-    // Validate basic data structure
-    validateBasicData(data);
-    
-    // Validate required fields for case creation
-    validateRequiredFields(data, 'case');
-    
-    // Process webhook
-    await handleWebhook(data, 'create', 'case');
-    
+    const caseData = req.body[0];
+    if (!validateBasicData(caseData) || !validateRequiredFields(caseData, 'case')) {
+      return res.status(400).json({ error: 'Invalid case data' });
+    }
+    await handleWebhook(caseData, 'create', 'case');
     res.status(200).json({ message: 'Case creation webhook processed successfully' });
   } catch (error) {
     logger.error('Error processing case creation webhook', { error: error.message });
@@ -28,17 +22,11 @@ router.post('/create', async (req, res) => {
 // Update case
 router.post('/update', async (req, res) => {
   try {
-    const data = req.body;
-    
-    // Validate basic data structure
-    validateBasicData(data);
-    
-    // Validate required fields for update
-    validateUpdateData(data);
-    
-    // Process webhook
-    await handleWebhook(data, 'update', 'case');
-    
+    const caseData = req.body[0];
+    if (!validateBasicData(caseData) || !validateUpdateData(caseData)) {
+      return res.status(400).json({ error: 'Invalid case data' });
+    }
+    await handleWebhook(caseData, 'update', 'case');
     res.status(200).json({ message: 'Case update webhook processed successfully' });
   } catch (error) {
     logger.error('Error processing case update webhook', { error: error.message });
@@ -49,14 +37,11 @@ router.post('/update', async (req, res) => {
 // Delete case
 router.post('/delete', async (req, res) => {
   try {
-    const data = req.body;
-    
-    // Validate basic data structure
-    validateBasicData(data);
-    
-    // Process webhook
-    await handleWebhook(data, 'delete', 'case');
-    
+    const caseData = req.body[0];
+    if (!validateBasicData(caseData)) {
+      return res.status(400).json({ error: 'Invalid case data' });
+    }
+    await handleWebhook(caseData, 'delete', 'case');
     res.status(200).json({ message: 'Case deletion webhook processed successfully' });
   } catch (error) {
     logger.error('Error processing case deletion webhook', { error: error.message });

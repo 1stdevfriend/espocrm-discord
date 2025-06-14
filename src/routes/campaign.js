@@ -1,23 +1,17 @@
 const express = require('express');
 const router = express.Router();
+const logger = require('../utils/logger');
 const { handleWebhook } = require('../handlers');
 const { validateBasicData, validateRequiredFields, validateUpdateData } = require('../utils/validation');
-const logger = require('../utils/logger');
 
 // Create campaign
 router.post('/create', async (req, res) => {
   try {
-    const data = req.body;
-    
-    // Validate basic data structure
-    validateBasicData(data);
-    
-    // Validate required fields for campaign creation
-    validateRequiredFields(data, 'campaign');
-    
-    // Process webhook
-    await handleWebhook(data, 'create', 'campaign');
-    
+    const campaignData = req.body[0];
+    if (!validateBasicData(campaignData) || !validateRequiredFields(campaignData, 'campaign')) {
+      return res.status(400).json({ error: 'Invalid campaign data' });
+    }
+    await handleWebhook(campaignData, 'create', 'campaign');
     res.status(200).json({ message: 'Campaign creation webhook processed successfully' });
   } catch (error) {
     logger.error('Error processing campaign creation webhook', { error: error.message });
@@ -28,17 +22,11 @@ router.post('/create', async (req, res) => {
 // Update campaign
 router.post('/update', async (req, res) => {
   try {
-    const data = req.body;
-    
-    // Validate basic data structure
-    validateBasicData(data);
-    
-    // Validate required fields for update
-    validateUpdateData(data);
-    
-    // Process webhook
-    await handleWebhook(data, 'update', 'campaign');
-    
+    const campaignData = req.body[0];
+    if (!validateBasicData(campaignData) || !validateUpdateData(campaignData)) {
+      return res.status(400).json({ error: 'Invalid campaign data' });
+    }
+    await handleWebhook(campaignData, 'update', 'campaign');
     res.status(200).json({ message: 'Campaign update webhook processed successfully' });
   } catch (error) {
     logger.error('Error processing campaign update webhook', { error: error.message });
@@ -49,14 +37,11 @@ router.post('/update', async (req, res) => {
 // Delete campaign
 router.post('/delete', async (req, res) => {
   try {
-    const data = req.body;
-    
-    // Validate basic data structure
-    validateBasicData(data);
-    
-    // Process webhook
-    await handleWebhook(data, 'delete', 'campaign');
-    
+    const campaignData = req.body[0];
+    if (!validateBasicData(campaignData)) {
+      return res.status(400).json({ error: 'Invalid campaign data' });
+    }
+    await handleWebhook(campaignData, 'delete', 'campaign');
     res.status(200).json({ message: 'Campaign deletion webhook processed successfully' });
   } catch (error) {
     logger.error('Error processing campaign deletion webhook', { error: error.message });
